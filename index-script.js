@@ -85,6 +85,12 @@ function popDisplay() {
 function pushNumber(event) {
     let targetID = (event.target).id;
     let toPush = numberDictionary[targetID];
+    if((toPush === ".") && (displayString.includes("."))) {
+        toPush = undefined;
+    }
+    if((toPush === ".") && (displayString === "")) {
+        displayString = "0";
+    }
     if(toPush !== undefined) {
         pushDisplay(toPush);
     }
