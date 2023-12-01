@@ -59,6 +59,8 @@ footer {
     justify-content: center;
     align-items: center;
 
+    width: 332px;
+
     gap: 10px;
 
     margin: auto;
@@ -67,22 +69,35 @@ footer {
 
 #display {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    flex-direction: column;
 
     align-self: stretch;
+    
+    word-wrap: break-word;
+    word-break: break-all;
 
-    height: 50px;
-
-    /* border: 1px solid black; */
-    border: none;
+    border: 1px solid black;
+    /* border: none; */
     border-radius: 5px;
+
+    margin: 2px;
+    padding: 0 8px 0 0;
+}
+
+#entry, #store {
+    align-self: stretch;
+    text-align: right;
+    
+    word-wrap: break-word;
+    word-break: break-all;
+
+    min-height: 50px;
 
     font-size: 40px;
     font-family: 'Courier New', Courier, monospace;
 
-    margin: 2px;
-    padding: 10px;
+    margin: 0;
+    padding: 0;
 }
 
 .buttons {
@@ -108,8 +123,24 @@ button {
     font-family: 'Courier New', Courier, monospace;
     background-color: white;
 
-    /* border: 1px solid black; */
-    border: none;
+    border: 1px solid black;
+    /* border: none; */
+    border-radius: 5px;
+
+    margin: 2px;
+    padding: 0;
+}
+
+#clear, #backspace {
+    height: 80px;
+    width: 164px;
+
+    font-size: 40px;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: white;
+
+    border: 1px solid black;
+    /* border: none; */
     border-radius: 5px;
 
     margin: 2px;

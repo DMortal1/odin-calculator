@@ -1,142 +1,198 @@
 
+// 
 // Global Variables
-let displayString = "";
-let entry1 = 0;
-let entry2 = 0;
-let currentOperation = "";
-let numberDictionary = {
-    "decimal-seperator": ".",
-    zero: "0",
-    one: "1",
-    two: "2",
-    three: "3",
-    four: "4",
-    five: "5",
-    six: "6",
-    seven: "7",
-    eight: "8",
-    nine: "9",
-}
+// 
 
+let storeString = ""; // Operand 1
+let entryString = ""; // Operand 2
+let currentOperation = null;
+let resetDisplayFlag = false;
+
+// 
 // Declare Buttons and Display
+// 
 
 // maximum 13 digits (string length 13)
 // use Ne+n or Ne-n for values beyond these
-const displaySection = document.querySelector("#display");
+const entrySection = document.querySelector("#entry");
+const storeSection = document.querySelector("#store");
+
 const buttonsSection = document.querySelector("#buttons");
 
-const remainderButton = document.querySelector("#remainder");
-const clearentryButton = document.querySelector("#clear-entry");
 const clearButton = document.querySelector("#clear");
 const backspaceButton = document.querySelector("#backspace");
 
-const reciprocalButton = document.querySelector("#reciprocal");
-const exponentButton = document.querySelector("#exponent");
-const rootButton = document.querySelector("#root");
-const divideButton = document.querySelector("#divide");
+const numberButtons = document.querySelectorAll(".number");
+const operatorButtons = document.querySelectorAll(".operator");
 
-const nineButton = document.querySelector("#nine");
-const eightButton = document.querySelector("#eight");
-const sevenButton = document.querySelector("#seven");
-const multiplyButton = document.querySelector("#multiply");
-
-const sixButton = document.querySelector("#six");
-const fiveButton = document.querySelector("#five");
-const fourButton = document.querySelector("#four");
-const minusButton = document.querySelector("#minus");
-
-const threeButton = document.querySelector("#three");
-const twoButton = document.querySelector("#two");
-const oneButton = document.querySelector("#one");
-const plusButton = document.querySelector("#plus");
-
-const plusminusButton = document.querySelector("#change-sign");
-const zeroButton = document.querySelector("#zero");
 const dotButton = document.querySelector("#decimal-seperator");
 const equalsButton = document.querySelector("#equals");
 
+// 
 // Add Event Listeners
+// 
 
-buttonsSection.addEventListener('click',pushNumber);
+clearButton.addEventListener('click', clear);
+backspaceButton.addEventListener('click', removeDigit);
 
-clearButton.addEventListener('click',clear);
-backspaceButton.addEventListener('click',popDisplay);
+dotButton.addEventListener('click', appendDot);
+equalsButton.addEventListener('click', evaluate);
 
+numberButtons.forEach(button => button.addEventListener("click",appendNumber));
+operatorButtons.forEach(button => button.addEventListener("click",setOperation));
+
+window.addEventListener("keydown", keyboardInput);
+
+// 
 // Functions
+// 
 
-function updateDisplay() {
-    displaySection.innerHTML = displayString;
+function appendNumber(event) {
+    let numb = event.target.id.split("").pop();
+    if(entrySection.innerHTML === "0" || resetDisplayFlag) {
+        resetDisplay();
+    }
+    entrySection.innerHTML += numb;
 }
 
-function pushDisplay(string) {
-    if(displayString.length < 13){
-        displayString = displayString + string;
+function setOperation(event) {
+    let op = convertOperator(event.target.id);
+    if(currentOperation !== null) {
+        evaluate();
     }
-    updateDisplay();
+    storeString = entrySection.innerHTML;
+    currentOperation = op;
+    storeSection.innerHTML = `${storeString} ${currentOperation}`;
+    resetDisplayFlag = true;
 }
 
-function popDisplay() {
-    if(displayString.length > 0){
-        displayString = displayString.slice(0,-1);
-    }
-    updateDisplay();
-}
-
-function pushNumber(event) {
-    let targetID = (event.target).id;
-    let toPush = numberDictionary[targetID];
-    if((toPush === ".") && (displayString.includes("."))) {
-        toPush = undefined;
-    }
-    if((toPush === ".") && (displayString === "")) {
-        displayString = "0";
-    }
-    if(toPush !== undefined) {
-        pushDisplay(toPush);
-    }
-}
-
-// Update Display Functions
-
-function equals() {
-}
-
-function clearentry() {
+function resetDisplay() {
+    entrySection.innerHTML = "";
+    resetDisplayFlag = false;
 }
 
 function clear() {
-    displayString = "";
-    updateDisplay();
+    entrySection.innerHTML = "0";
+    storeSection.innerHTML = "";
+    
+    entryString = "";
+    storeString = "";
+
+    currentOperation = null;
 }
 
-function backspace() {
+function appendDot() {
+    if(resetDisplayFlag) {
+        resetDisplay();
+    }
+    if(entrySection.innerHTML === "") {
+        entrySection.innerHTML = "0";
+    }
+    if(entrySection.innerHTML.includes(".")) {
+        return;
+    }
+    entrySection.innerHTML += ".";
 }
 
-// Operation Functions
-
-function plus() {
+function removeDigit() {
+    entrySection.innerHTML = entrySection.innerHTML.slice(0,-1);
 }
 
-function minus() {
+function evaluate() {
+    if(currentOperation === null || resetDisplayFlag) {
+        return;
+    }
+    if(currentOperation === "divide" && entrySection.innerHTML === "0") {
+        alert("Cannot divide by zero")
+        return;
+    }
+    entryString = entrySection.innerHTML;
+    entrySection.innerHTML = roundResult(operate(currentOperation, storeString, entryString));
+    storeSection.innerHTML = `${storeString} ${currentOperation} ${entryString} =`;
+    currentOperation = null;
 }
 
-function multiply() {
+function roundResult(numb) {
+    return Math.round(numb*1000)/1000;
 }
 
-function divide() {
+function keyboardInput(event) {
+    let key = event.key;
+    switch(key) {
+        case "0": case "1": case "2": case "3": case "4": case "5": case "6": case "7": case "8": case "9":
+            event.target.id = key;
+            appendNumber(event);
+            break;
+        case ".":
+            appendDot();
+            break;
+        case "=": case "Enter":
+            evaluate();
+            break;
+        case "Backspace":
+            removeDigit();
+            break;
+        case "Escape":
+            clear();
+            break;
+        case "+": case "-": case "*": case "/":
+            event.target.id = convertOperator(key);
+            setOperation(event);
+            break;
+        default:
+            break;
+    }
 }
 
-function plusminus() {
+function convertOperator(op) {
+    switch(op) {
+        case "+": case "plus": case "+":
+            return "+";
+        case "-": case "minus": case "&#8722":
+            return "&#8722";
+        case "*": case "multiply": case "&#215":
+            return "&#215";
+        case "/": case "divide": case "&#247":
+            return "&#247";
+        default:
+            return null;
+    }
 }
 
-function reciprocal() {
+function plus(a,b) {
+    return a+b;
 }
 
-function exponent() {
+function minus(a,b) {
+    return a-b;
 }
 
-function root() {
+function multiply(a,b) {
+    return a*b;
 }
 
-function remainder() {
+function divide(a,b) {
+    return a/b;
+}
+
+function operate(operator, a, b) {
+    a = Number(a);
+    b = Number(b);
+
+    switch(operator) {
+        case "+":
+            return plus(a,b);
+        case "&#8722":
+            return minus(a,b);
+        case "&#215":
+            return multiply(a,b);
+        case "&#247":
+            if(b === 0) {
+                return null;
+            } else {
+                return divide(a,b);
+            }
+        default:
+            return null;
+    }
 }
