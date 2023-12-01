@@ -5,4 +5,4 @@ Project: Calculator<br>
 <br>
 In this project, an in-browser calculator is built.<br>
 <br>
-https://dmortal1.github.io/odin-landing-page/
+https://dmortal1.github.io/odin-calculator/
