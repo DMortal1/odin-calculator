@@ -36,3 +36,51 @@ const dotButton = document.querySelector("#decimal-seperator");
 const equalsButton = document.querySelector("#equals");
 
 // Add Event Listeners
+
+// Functions
+
+function updateDisplay() {
+}
+
+// Update Display Functions
+
+function equals() {
+}
+
+function clearentry() {
+}
+
+function clear() {
+}
+
+function backspace() {
+}
+
+// Operation Functions
+
+function plus() {
+}
+
+function minus() {
+}
+
+function multiply() {
+}
+
+function divide() {
+}
+
+function plusminus() {
+}
+
+function reciprocal() {
+}
+
+function exponent() {
+}
+
+function root() {
+}
+
+function remainder() {
+}
